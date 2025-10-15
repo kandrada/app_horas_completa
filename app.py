@@ -18,18 +18,18 @@ SCOPES = [
 SPREADSHEET_NAME = "Prueba"  # tu hoja """
 
 try:
-    # 1. Intentar cargar las credenciales desde la Variable de Entorno (usada en el servidor)
+    # 1. Intentar cargar las credenciales desde la Variable de Entorno
     creds_json = os.environ.get("GSPREAD_CREDENTIALS")
     
-    if creds_json:
-        # Si la variable existe, la usamos
-        creds_info = json.loads(creds_json)
-        credentials = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
-    else:
-        # 2. Fallback: Cargar el archivo local (usado para desarrollo en tu PC)
-        # Esto solo funciona si estás ejecutando el script en tu computadora
-        CREDENTIALS_FILE = r"C:\Users\LABTECH ACER\Documents\Kim_USB\credenciales.json" # Cambia esto a tu ruta
-        credentials = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
+    # 2. Si la variable no existe en el servidor, no podemos continuar.
+    if not creds_json:
+        # En el servidor, si no encuentra la variable, asumimos que no hay credenciales
+        # y lanzamos un error que no confunde al intérprete de Python.
+        raise ValueError("La variable de entorno GSPREAD_CREDENTIALS no está configurada. El despliegue fallará.")
+
+    # 3. Si la variable existe, la usamos para autorizar gspread
+    creds_info = json.loads(creds_json)
+    credentials = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
     
     client = gspread.authorize(credentials)
     SPREADSHEET_NAME = "Prueba" 
@@ -39,6 +39,7 @@ try:
 
 
 except Exception as e:
+    # Este bloque maneja tanto el nuevo ValueError como cualquier error de conexión
     print(f"Error al conectar con Google Sheets: {e}")
     sheet_saldos = None
     sheet_solicitudes = None
@@ -232,3 +233,4 @@ def agregar_usuario():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
