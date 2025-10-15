@@ -14,9 +14,6 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-""" CREDENTIALS_FILE = r"C:\Users\LABTECH ACER\Documents\Kim_USB\credenciales.json"
-SPREADSHEET_NAME = "Prueba"  # tu hoja """
-
 try:
     # 1. Intentar cargar las credenciales desde la Variable de Entorno
     creds_json = os.environ.get("GSPREAD_CREDENTIALS")
@@ -233,4 +230,5 @@ def agregar_usuario():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
