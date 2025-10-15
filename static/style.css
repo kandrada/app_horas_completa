@@ -109,7 +109,7 @@ input, textarea {
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #A01E21;
 }
 
 button {
@@ -363,7 +363,7 @@ ul li {
 
 .detalle-solicitudes h3 {
     margin-top: 0;
-    color: #007bff;
+    color: #A01E21;
 }
 
 .solicitud-detalle {
@@ -373,3 +373,4 @@ ul li {
     border-radius: 5px;
     border-left: 4px solid #28a745;
 }
+
