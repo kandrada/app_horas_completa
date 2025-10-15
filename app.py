@@ -116,7 +116,7 @@ def empleado():
         try:
             # Añadir solicitud a la hoja 'Solicitudes'
             # (Asegúrate que el orden de tus columnas sea Nombre, Fecha solicitada, Cantidad de horas, Motivo, Estado, Fecha de registro)
-            sheet_solicitudes.append_row([nombre, fecha, horas, motivo, "Pendiente", fecha_registro])
+            sheet_solicitudes.append_row([nombre, fecha, horas, motivo, fecha_registro , "Pendiente"])
             flash("Solicitud enviada para aprobación.", "success")
         except Exception as e:
             flash(f"Error al enviar solicitud: {e}", "error")
@@ -230,5 +230,6 @@ def agregar_usuario():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
