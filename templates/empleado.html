@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Panel Empleado{% endblock %}
+{% block content %}
+
+<h1>Bienvenido {{ nombre }}</h1>
+
+<h2>Nueva Solicitud</h2>
+<form method="POST">
+    <label for="fecha">Fecha solicitada:</label>
+    <input type="date" name="fecha" required>
+
+    <label for="horas">Cantidad de horas:</label>
+    <input type="number" name="horas" required min="1">
+
+    <label for="motivo">Motivo:</label>
+    <textarea name="motivo" rows="3" required></textarea>
+
+    <button type="submit">Enviar solicitud</button>
+</form>
+
+<h2>Mis Solicitudes</h2>
+{% if solicitudes %}
+    {% for s in solicitudes %}
+        {% if s['Estado']|lower == 'aprobado' %}
+            {% set clase_estado = 'estado-aprobado' %}
+        {% elif s['Estado']|lower == 'rechazado' %}
+            {% set clase_estado = 'estado-rechazado' %}
+        {% else %}
+            {% set clase_estado = 'estado-pendiente' %}
+        {% endif %}
+
+        <div class="solicitud {{ clase_estado }}">
+            <p><b>Fecha:</b> {{ s['Fecha solicitada'] }}</p>
+            <p><b>Horas:</b> {{ s['Cantidad de horas'] }}</p>
+            <p><b>Motivo:</b> {{ s['Motivo'] }}</p>
+            <p><b>Estado:</b> {{ s['Estado'] }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No tienes solicitudes aún.</p>
+{% endif %}
+
+{% endblock %}

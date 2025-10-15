@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}App Horas{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="logo-container">
+    <img src="{{ url_for('static', filename='logonobgSM.png') }}" alt="Logo de la empresa" class="logo">
+    </div>
+    {% if rol %}
+    <nav class="menu">
+        {% if rol == 'empleado' %}
+            <a href="{{ url_for('empleado') }}">Mis solicitudes</a>
+            <a href="{{ url_for('calendario') }}">Calendario</a>
+        {% elif rol == 'gestor' %}
+            <a href="{{ url_for('gestor') }}">Gestión de solicitudes</a>
+            <a href="{{ url_for('calendario') }}">Calendario</a>
+            <a href="{{ url_for('agregar_usuario') }}">Agregar Usuario</a>
+        {% endif %}
+        <div class="menu-derecha">
+            <span class="usuario-logueado">👤{{ session["usuario"] }}</span>
+            <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+        </div>
+    </nav>
+    <hr>
+    {% endif %}
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

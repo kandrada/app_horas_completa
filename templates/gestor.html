@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Panel Gestor{% endblock %}
+{% block content %}
+
+<h1>Solicitudes de Empleados</h1>
+
+{% if solicitudes %}
+<table>
+    <tr>
+        <th>Nombre</th>
+        <th>Fecha solicitada</th>
+        <th>Horas</th>
+        <th>Motivo</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+    </tr>
+    {% for s in solicitudes %}
+        {% if s['Estado']|lower == 'aprobado' %}
+            {% set clase_estado = 'estado-aprobado' %}
+        {% elif s['Estado']|lower == 'rechazado' %}
+            {% set clase_estado = 'estado-rechazado' %}
+        {% else %}
+            {% set clase_estado = 'estado-pendiente' %}
+        {% endif %}
+
+        <tr class="{{ clase_estado }}">
+            <td>{{ s['Nombre'] }}</td>
+            <td>{{ s['Fecha solicitada'] }}</td>
+            <td>{{ s['Cantidad de horas'] }}</td>
+            <td>{{ s['Motivo'] }}</td>
+            <td>{{ s['Estado'] }}</td>
+            <td>
+                {% if s['Estado']|lower == 'pendiente' %}
+                <form method="POST" style="display: inline;">
+                    <input type="hidden" name="fila" value="{{ loop.index + 1 }}">
+                    <button type="submit" name="accion" value="aprobar" class="btn-aprobar">Aprobar</button>
+                </form>
+                <form method="POST" style="display: inline;">
+                    <input type="hidden" name="fila" value="{{ loop.index + 1 }}">
+                    <button type="submit" name="accion" value="rechazar" class="btn-rechazar">Rechazar</button>
+                </form>
+                {% else %}
+                    <span style="color: #666;">Ya procesada</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% else %}
+    <p>No hay solicitudes registradas.</p>
+{% endif %}
+
+{% endblock %}

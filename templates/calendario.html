@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}Calendario{% endblock %}
+{% block content %}
+
+<h1>Calendario de Horas Libres Aprobadas</h1>
+
+<div class="calendario-controles">
+    <button onclick="cambiarMes(-1)">← Mes Anterior</button>
+    <h2 id="mes-anio"></h2>
+    <button onclick="cambiarMes(1)">Mes Siguiente →</button>
+</div>
+
+<!-- <div class="calendario-grid">
+    <div class="dia-semana">Dom</div>
+    <div class="dia-semana">Lun</div>
+    <div class="dia-semana">Mar</div>
+    <div class="dia-semana">Mié</div>
+    <div class="dia-semana">Jue</div>
+    <div class="dia-semana">Vie</div>
+    <div class="dia-semana">Sáb</div>
+    <div id="dias-calendario"></div>
+</div> -->
+
+<div class="calendario-grid" id="calendario-principal"> <div class="dia-semana">Dom</div>
+    <div class="dia-semana">Lun</div>
+    <div class="dia-semana">Mar</div>
+    <div class="dia-semana">Mié</div>
+    <div class="dia-semana">Jue</div>
+    <div class="dia-semana">Vie</div>
+    <div class="dia-semana">Sáb</div>
+    </div>
+
+<div class="leyenda">
+    <h3>Leyenda:</h3>
+    <div class="leyenda-item">
+        <span class="color-box hoy"></span> Día actual
+    </div>
+    <div class="leyenda-item">
+        <span class="color-box con-solicitud"></span> Día con horas libres aprobadas
+    </div>
+</div>
+
+<div id="detalle-solicitudes" class="detalle-solicitudes" style="display: none;">
+    <h3>Solicitudes para <span id="fecha-seleccionada"></span></h3>
+    <div id="lista-solicitudes"></div>
+    <button onclick="cerrarDetalle()">Cerrar</button>
+</div>
+
+<script>
+    // Datos de solicitudes desde Python
+    const solicitudesAprobadas = JSON.parse('{{ solicitudes_aprobadas | tojson }}');
+    
+    let mesActual = new Date().getMonth();
+    let anioActual = new Date().getFullYear();
+    
+    const nombresMeses = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    
+    function formatearFecha(anio, mes, dia) {
+        const mesStr = String(mes + 1).padStart(2, '0');
+        const diaStr = String(dia).padStart(2, '0');
+        return `${anio}-${mesStr}-${diaStr}`;
+    }
+    
+    /*function generarCalendario() {
+        const primerDia = new Date(anioActual, mesActual, 1);
+        const ultimoDia = new Date(anioActual, mesActual + 1, 0);
+        const diasEnMes = ultimoDia.getDate();
+        const primerDiaSemana = primerDia.getDay();
+        
+        // Actualizar título
+        document.getElementById('mes-anio').textContent = 
+            `${nombresMeses[mesActual]} ${anioActual}`;
+        
+        // Limpiar calendario
+        const diasCalendario = document.getElementById('dias-calendario');
+        diasCalendario.innerHTML = '';
+        
+        // Agregar días vacíos al inicio
+        for (let i = 0; i < primerDiaSemana; i++) {
+            const diaVacio = document.createElement('div');
+            diaVacio.className = 'dia-vacio';
+            diasCalendario.appendChild(diaVacio);
+        }
+        
+        // Agregar días del mes
+        const hoy = new Date();
+        for (let dia = 1; dia <= diasEnMes; dia++) {
+            const diaDiv = document.createElement('div');
+            diaDiv.className = 'dia';
+            
+            const fechaStr = formatearFecha(anioActual, mesActual, dia);
+            
+            // Verificar si es hoy
+            if (anioActual === hoy.getFullYear() && 
+                mesActual === hoy.getMonth() && 
+                dia === hoy.getDate()) {
+                diaDiv.classList.add('hoy');
+            }
+            
+            // Verificar si hay solicitudes aprobadas
+            if (solicitudesAprobadas[fechaStr]) {
+                diaDiv.classList.add('con-solicitud');
+                diaDiv.style.cursor = 'pointer';
+                diaDiv.onclick = () => mostrarDetalle(fechaStr, dia);
+            }
+            
+            diaDiv.innerHTML = `<span class="numero-dia">${dia}</span>`;
+            
+            diasCalendario.appendChild(diaDiv);
+        }
+    }*/
+
+    // ...
+    function generarCalendario() {
+        const primerDia = new Date(anioActual, mesActual, 1);
+        const ultimoDia = new Date(anioActual, mesActual + 1, 0);
+        const diasEnMes = ultimoDia.getDate();
+        const primerDiaSemana = primerDia.getDay();
+        
+        // Actualizar título
+        document.getElementById('mes-anio').textContent = 
+            `${nombresMeses[mesActual]} ${anioActual}`;
+        
+        // --- LIMPIEZA CORREGIDA ---
+        // Referencia al contenedor principal (el grid)
+        const calendarioGrid = document.getElementById('calendario-principal');
+        
+        // Eliminar todos los hijos del grid DESPUÉS de los 7 encabezados de días de la semana
+        while (calendarioGrid.children.length > 7) {
+            calendarioGrid.removeChild(calendarioGrid.lastChild);
+        }
+        // -------------------------
+        
+        // Agregar días vacíos al inicio
+        for (let i = 0; i < primerDiaSemana; i++) {
+            const diaVacio = document.createElement('div');
+            diaVacio.className = 'dia-vacio';
+            calendarioGrid.appendChild(diaVacio); // Añadir al grid directamente
+        }
+        
+        // Agregar días del mes
+        const hoy = new Date();
+        for (let dia = 1; dia <= diasEnMes; dia++) {
+            const diaDiv = document.createElement('div');
+            diaDiv.className = 'dia';
+            
+            const fechaStr = formatearFecha(anioActual, mesActual, dia);
+            
+            // ... (resto del código de verificación de hoy y solicitudes) ...
+            if (anioActual === hoy.getFullYear() && 
+                mesActual === hoy.getMonth() && 
+                dia === hoy.getDate()) {
+                diaDiv.classList.add('hoy');
+            }
+            
+            // Verificar si hay solicitudes aprobadas
+            if (solicitudesAprobadas[fechaStr]) {
+                diaDiv.classList.add('con-solicitud');
+                diaDiv.style.cursor = 'pointer';
+                diaDiv.onclick = () => mostrarDetalle(fechaStr, dia);
+            }
+            
+            diaDiv.innerHTML = `<span class="numero-dia">${dia}</span>`;
+            
+            calendarioGrid.appendChild(diaDiv); // Añadir al grid directamente
+        }
+    }
+    
+    
+    function cambiarMes(direccion) {
+        mesActual += direccion;
+        if (mesActual > 11) {
+            mesActual = 0;
+            anioActual++;
+        } else if (mesActual < 0) {
+            mesActual = 11;
+            anioActual--;
+        }
+        generarCalendario();
+    }
+    
+    function mostrarDetalle(fechaStr, dia) {
+        const solicitudes = solicitudesAprobadas[fechaStr];
+        if (!solicitudes) return;
+        
+        document.getElementById('fecha-seleccionada').textContent = 
+            `${dia} de ${nombresMeses[mesActual]} de ${anioActual}`;
+        
+        let html = '';
+        solicitudes.forEach(sol => {
+            html += `
+                <div class="solicitud-detalle">
+                    <strong>${sol.nombre}</strong>: ${sol.horas} horas
+                </div>
+            `;
+        });
+        
+        document.getElementById('lista-solicitudes').innerHTML = html;
+        document.getElementById('detalle-solicitudes').style.display = 'block';
+    }
+    
+    function cerrarDetalle() {
+        document.getElementById('detalle-solicitudes').style.display = 'none';
+    }
+    
+    // Generar calendario al cargar
+    generarCalendario();
+</script>
+
+{% endblock %}

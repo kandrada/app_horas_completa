@@ -1,0 +1,375 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+h2 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+/* --- Estilos para el Logo de la Empresa (añadir a style.css) --- */
+
+.logo-container {
+    /* Centra el contenedor y añade margen */
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.logo {
+    /* Define el tamaño máximo del logo */
+    max-width: 180px; /* Ajusta este valor al ancho que necesites */
+    height: auto;     /* Mantiene la proporción */
+    display: block;   /* Evita espacios extra en línea */
+    margin: 0 auto;   /* Centra la imagen */
+}
+
+/* Menú de navegación */
+.menu {
+    background-color: #A01E21;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+
+    /* MODIFICACIÓN CLAVE: Usar Flexbox para alinear todos los elementos */
+    display: flex;
+    /* justify-content: space-between; <--- ELIMINAR O COMENTAR ESTO */
+    align-items: center;
+}
+
+/* Contenedor para alinear usuario y Cerrar Sesión a la derecha */
+.menu-derecha {
+    display: flex;
+    align-items: center;
+    /* Esto agrupa el texto del usuario y el botón de Cerrar Sesión */
+    margin-left: auto;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+/* Estilo para el nombre del usuario logueado */
+.usuario-logueado {
+    color: white;
+    margin-right: 20px; /* Espacio entre el nombre y el botón de logout */
+    padding: 8px 0; /* Para igualar la altura de los enlaces */
+    white-space: nowrap; /* Evita que el nombre de usuario se rompa en varias líneas */
+}
+
+.menu a:hover {
+    background-color: #500F11;
+}
+
+/* Formularios */
+form {
+    margin-bottom: 30px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+button {
+    background-color: #A01E21;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #500F11;
+}
+
+/* Tarjetas de solicitudes */
+.solicitud {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: #fff;
+}
+
+.solicitud b {
+    color: #333;
+}
+
+/* Estados con colores */
+.estado-pendiente {
+    background-color: #fff3cd !important;
+}
+
+.estado-aprobado {
+    background-color: #d4edda !important;
+}
+
+.estado-rechazado {
+    background-color: #f8d7da !important;
+}
+
+/* Tabla de gestión */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #A01E21;
+    color: white;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Botones específicos */
+.btn-aprobar {
+    background-color: #28a745;
+    padding: 6px 12px;
+    font-size: 14px;
+    margin: 2px;
+}
+
+.btn-aprobar:hover {
+    background-color: #218838;
+}
+
+.btn-rechazar {
+    background-color: #dc3545;
+    padding: 6px 12px;
+    font-size: 14px;
+    margin: 2px;
+}
+
+.btn-rechazar:hover {
+    background-color: #c82333;
+}
+
+
+/* Mensajes de error */
+p[style*="color:red"], .error {
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Estilos para el calendario */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    border-left: 4px solid #28a745;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.calendario-controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.calendario-controles h2 {
+    margin: 0;
+    color: #A01E21;
+}
+
+.calendario-controles button {
+    margin: 0;
+    padding: 8px 15px;
+}
+
+.calendario-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.dia-semana {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #A01E21;
+    color: white;
+    border-radius: 5px;
+}
+
+.dia {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.dia:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.dia-vacio {
+    aspect-ratio: 1;
+}
+
+.numero-dia {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.dia.hoy {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    font-weight: bold;
+}
+
+.dia.con-solicitud {
+    background-color: #d4edda;
+    border: 2px solid #28a745;
+}
+
+.dia.con-solicitud:hover {
+    background-color: #c3e6cb;
+}
+
+.leyenda {
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.leyenda h3 {
+    margin-top: 0;
+}
+
+.leyenda-item {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.color-box {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+}
+
+.color-box.hoy {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+}
+
+.color-box.con-solicitud {
+    background-color: #d4edda;
+    border: 2px solid #28a745;
+}
+
+.detalle-solicitudes {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.detalle-solicitudes h3 {
+    margin-top: 0;
+    color: #007bff;
+}
+
+.solicitud-detalle {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    border-left: 4px solid #28a745;
+}

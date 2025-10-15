@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Agregar Usuario{% endblock %}
+{% block content %}
+
+<h1>Agregar Nuevo Usuario</h1>
+
+<form method="POST">
+    <label for="nombre">Nombre (Usuario para login):</label>
+    <input type="text" id="nombre" name="nombre" required>
+
+    <label for="password">Contraseña (Temporal):</label>
+    <input type="password" id="password" name="password" required>
+    
+    <label for="rol">Rol:</label>
+    <select id="rol" name="rol" required>
+        <option value="empleado">Empleado</option>
+        <option value="gestor">Gestor</option>
+    </select>
+
+    <label for="saldo_inicial">Saldo de Horas (Inicial):</label>
+    <input type="number" id="saldo_inicial" name="saldo_inicial" value="0" min="0" required>
+
+    <button type="submit">Crear Usuario</button>
+</form>
+
+{% endblock %}
