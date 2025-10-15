@@ -3,24 +3,41 @@ import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 import os
-import json # Necesario para la función de agregar usuario
+import json 
 
 app = Flask(__name__)
 app.secret_key = "una_clave_segura_123"
 
-# --- CONFIGURACIÓN GOOGLE SHEETS ---
+# --- CONFIGURACIÓN GOOGLE SHEETS (MODIFICADA para Despliegue) ---
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
-CREDENTIALS_FILE = r"C:\Users\LABTECH ACER\Documents\Kim_USB\credenciales.json"
-SPREADSHEET_NAME = "Prueba"  # tu hoja
+
+""" CREDENTIALS_FILE = r"C:\Users\LABTECH ACER\Documents\Kim_USB\credenciales.json"
+SPREADSHEET_NAME = "Prueba"  # tu hoja """
 
 try:
-    credentials = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
+    # 1. Intentar cargar las credenciales desde la Variable de Entorno (usada en el servidor)
+    creds_json = os.environ.get("GSPREAD_CREDENTIALS")
+    
+    if creds_json:
+        # Si la variable existe, la usamos
+        creds_info = json.loads(creds_json)
+        credentials = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
+    else:
+        # 2. Fallback: Cargar el archivo local (usado para desarrollo en tu PC)
+        # Esto solo funciona si estás ejecutando el script en tu computadora
+        CREDENTIALS_FILE = r"C:\Users\LABTECH ACER\Documents\Kim_USB\credenciales.json" # Cambia esto a tu ruta
+        credentials = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
+    
     client = gspread.authorize(credentials)
+    SPREADSHEET_NAME = "Prueba" 
     sheet_saldos = client.open(SPREADSHEET_NAME).worksheet("Saldos")
     sheet_solicitudes = client.open(SPREADSHEET_NAME).worksheet("Solicitudes")
+    print("Conexión a Google Sheets exitosa.")
+
+
 except Exception as e:
     print(f"Error al conectar con Google Sheets: {e}")
     sheet_saldos = None
