@@ -4,6 +4,10 @@
 
 <h1>Bienvenido {{ nombre }}</h1>
 
+<div class="saldo-info">
+    <h2>Horas Extra Disponibles: <b>{{ saldo_horas }}</b></h2>
+</div>
+
 <h2>Nueva Solicitud</h2>
 <form method="POST">
     <label for="fecha">Fecha solicitada:</label>
@@ -39,5 +43,6 @@
 {% else %}
     <p>No tienes solicitudes aún.</p>
 {% endif %}
+
 
 {% endblock %}
