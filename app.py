@@ -65,9 +65,23 @@ def get_usuarios_from_sheet():
         print(f"Error al leer usuarios de Google Sheets: {e}")
         return {}
 
-# --- Login y Home (MODIFICADO para usar la hoja de cálculo) ---
-
-# El diccionario USUARIOS codificado fue ELIMINADO
+def obtener_saldo_horas(nombre_usuario):
+    """Busca el saldo de horas acumuladas para un usuario en la hoja 'Saldos'."""
+    try:
+        if sheet_saldos:
+            # Obtener todos los registros (la primera fila es la cabecera)
+            registros = sheet_saldos.get_all_records()
+            
+            # Buscar el registro del usuario
+            for r in registros:
+                if r.get('Nombre') == nombre_usuario:
+                    # 'Horas acumuladas' es el nombre de la columna en la hoja
+                    return r.get('Horas acumuladas', 0) 
+            return 0  # Si no encuentra el usuario, devuelve 0
+        return 0
+    except Exception as e:
+        print(f"Error al obtener saldo para {nombre_usuario}: {e}")
+        return 0
 
 @app.route("/")
 def home():
@@ -122,12 +136,14 @@ def empleado():
             flash(f"Error al enviar solicitud: {e}", "error")
 
         return redirect(url_for("empleado"))
-
+        
+    horas_disponibles = obtener_saldo_horas(session["usuario"])
+    
     # Mostrar solicitudes propias
     registros = sheet_solicitudes.get_all_records()
     mias = [r for r in registros if r["Nombre"] == session["usuario"]]
 
-    return render_template("empleado.html", solicitudes=mias, nombre=session["usuario"], rol=session["rol"])
+    return render_template("empleado.html", solicitudes=mias, nombre=session["usuario"], rol=session["rol"], saldo_horas=horas_disponibles)
 
 # --- Vista gestor ---
 @app.route("/gestor", methods=["GET", "POST"])
@@ -230,6 +246,7 @@ def agregar_usuario():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
