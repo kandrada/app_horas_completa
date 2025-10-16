@@ -374,3 +374,28 @@ ul li {
     border-left: 4px solid #28a745;
 }
 
+/* --- ESTILOS PARA MOSTRAR EL SALDO DE HORAS (empleado.html) --- */
+.saldo-info {
+    /* Fondo suave y borde para destacar la información */
+    background-color: white; /* Azul muy claro */
+    border: 1px solid #28a745; /* Borde azul */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra suave */
+}
+
+.saldo-info h2 {
+    /* Estilos del texto principal */
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #28a745; /* Color principal */
+    font-size: 1.2em;
+}
+
+.saldo-info b {
+    /* Estilos para el número de horas (hace que el saldo se vea más grande y destacado) */
+    font-size: 1em; /* Número de horas más grande */
+    color: #28a745; /* Verde para indicar un saldo positivo */
+}
+
