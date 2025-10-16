@@ -188,6 +188,7 @@ def empleado():
     # Mostrar solicitudes propias
     registros = sheet_solicitudes.get_all_records()
     mias = [r for r in registros if r["Nombre"] == session["usuario"]]
+    mias.reverse()
 
     return render_template("empleado.html", solicitudes=mias, nombre=session["usuario"], rol=session["rol"], saldo_horas=horas_disponibles)
 
@@ -235,6 +236,8 @@ def gestor():
         return redirect(url_for("gestor"))
 
     registros = sheet_solicitudes.get_all_records()
+    registros.reverse()
+    
     return render_template("gestor.html", solicitudes=registros, rol=session["rol"])
 
 # --- Vista calendario ---
@@ -313,6 +316,7 @@ def agregar_usuario():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
