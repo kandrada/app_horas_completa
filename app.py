@@ -65,23 +65,69 @@ def get_usuarios_from_sheet():
         print(f"Error al leer usuarios de Google Sheets: {e}")
         return {}
 
+# --- Función de Soporte (SIMPLIFICADA) ---
 def obtener_saldo_horas(nombre_usuario):
-    """Busca el saldo de horas acumuladas para un usuario en la hoja 'Saldos'."""
+    """Busca el saldo de horas *directamente* de la hoja 'Saldos'."""
     try:
         if sheet_saldos:
-            # Obtener todos los registros (la primera fila es la cabecera)
             registros = sheet_saldos.get_all_records()
-            
-            # Buscar el registro del usuario
             for r in registros:
                 if r.get('Nombre') == nombre_usuario:
-                    # 'Horas acumuladas' es el nombre de la columna en la hoja
+                    # Lee el valor actualizado de la columna 'Horas acumuladas'
                     return r.get('Horas acumuladas', 0) 
-            return 0  # Si no encuentra el usuario, devuelve 0
+            return 0
         return 0
     except Exception as e:
         print(f"Error al obtener saldo para {nombre_usuario}: {e}")
         return 0
+
+# --- Función de Soporte para actualizar Saldos ---
+def actualizar_saldo(nombre_usuario, horas_a_restar):
+    """Busca al usuario en 'Saldos' y resta la cantidad de horas."""
+    try:
+        if not sheet_saldos:
+            print("Error: Hoja 'Saldos' no conectada.")
+            return False
+
+        # 1. Obtener todos los valores y encontrar la columna de Horas Acumuladas
+        data = sheet_saldos.get_all_values()
+        header = data[0]
+        
+        # Encontrar el índice de la columna 'Nombre' y 'Horas acumuladas'
+        try:
+            col_nombre = header.index('Nombre')
+            col_horas = header.index('Horas acumuladas')
+        except ValueError:
+            print("Error: No se encontraron las columnas 'Nombre' u 'Horas acumuladas' en la hoja 'Saldos'.")
+            return False
+
+        # 2. Buscar al usuario y obtener su número de fila
+        fila_usuario = -1
+        horas_actuales = 0
+        for i, row in enumerate(data[1:], start=2): # Empezamos en la fila 2
+            if row and row[col_nombre] == nombre_usuario:
+                fila_usuario = i
+                # Intentar convertir el valor de horas a número (si no existe, usar 0)
+                try:
+                    horas_actuales = float(row[col_horas].replace(',', '.'))
+                except (ValueError, IndexError):
+                    horas_actuales = 0
+                break
+
+        if fila_usuario == -1:
+            print(f"Error: Usuario {nombre_usuario} no encontrado en la hoja 'Saldos'.")
+            return False
+
+        # 3. Calcular y actualizar el nuevo saldo
+        nuevo_saldo = max(0, horas_actuales - horas_a_restar)
+        
+        # El método update_cell necesita el número de fila (fila_usuario) y el número de columna (col_horas + 1)
+        sheet_saldos.update_cell(fila_usuario, col_horas + 1, nuevo_saldo)
+        return True
+
+    except Exception as e:
+        print(f"Error al actualizar saldo en Google Sheets: {e}")
+        return False
 
 @app.route("/")
 def home():
@@ -145,25 +191,46 @@ def empleado():
 
     return render_template("empleado.html", solicitudes=mias, nombre=session["usuario"], rol=session["rol"], saldo_horas=horas_disponibles)
 
-# --- Vista gestor ---
+# --- Vista gestor (MODIFICADA) ---
 @app.route("/gestor", methods=["GET", "POST"])
 def gestor():
     if "usuario" not in session or session["rol"] != "gestor":
         return redirect(url_for("login"))
 
     if request.method == "POST":
-        fila = int(request.form["fila"])
+        fila_solicitud = int(request.form["fila"])
         accion = request.form["accion"]
         
+        # 1. Leer los datos de la solicitud ANTES de actualizar el estado
+        datos_solicitud = sheet_solicitudes.row_values(fila_solicitud)
+        
+        # Buscar el índice de las columnas necesarias
+        header_solicitudes = sheet_solicitudes.row_values(1)
+        
         try:
-            # El índice de la fila es 1-based en gspread.
-            col_estado = sheet_solicitudes.row_values(1).index("Estado") + 1
-            nuevo_estado = "Aprobado" if accion == "aprobar" else "Rechazado"
-            sheet_solicitudes.update_cell(fila, col_estado, nuevo_estado)
+            # Asumimos que la hoja 'Solicitudes' tiene 'Nombre' y 'Cantidad de horas'
+            idx_nombre = header_solicitudes.index("Nombre")
+            idx_horas = header_solicitudes.index("Cantidad de horas")
             
-            flash(f"Solicitud {fila-1} {nuevo_estado.lower()} con éxito.", "success")
-        except Exception as e:
-            flash(f"Error al procesar la solicitud: {e}", "error")
+            nombre_empleado = datos_solicitud[idx_nombre]
+            horas_solicitadas = float(datos_solicitud[idx_horas])
+            
+        except (ValueError, IndexError):
+            flash("Error al leer los datos de la solicitud. Verifique los encabezados.", "error")
+            return redirect(url_for("gestor"))
+
+        # 2. Actualizar el estado de la solicitud en la hoja 'Solicitudes'
+        col_estado = header_solicitudes.index("Estado") + 1
+        sheet_solicitudes.update_cell(fila_solicitud, col_estado, "Aprobado" if accion == "aprobar" else "Rechazado")
+        
+        # 3. Lógica CRÍTICA: Actualizar el Saldo si fue APROBADA
+        if accion == "aprobar":
+            if not actualizar_saldo(nombre_empleado, horas_solicitadas):
+                flash(f"Error al restar {horas_solicitadas} horas del saldo de {nombre_empleado}.", "error")
+            else:
+                flash(f"Solicitud aprobada y {horas_solicitadas} horas restadas del saldo de {nombre_empleado}.", "success")
+        else:
+            flash("Solicitud rechazada.", "warning")
 
         return redirect(url_for("gestor"))
 
@@ -246,6 +313,7 @@ def agregar_usuario():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
